@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidewing Beacon Patrol</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div id="hud" class="hud hidden">
+  <div class="vignette"></div>
+
+  <div class="mission-card">
+    <div class="label">TIDEWING / BEACON PATROL</div>
+    <div id="mission-name" class="mission-name">Beacon circuit</div>
+    <div id="objective" class="objective">Fly the five amber gates</div>
+    <div class="mission-stats">
+      <span id="timer">00:00</span>
+      <span id="ring-count">GATES 0 / 5</span>
+    </div>
+  </div>
+
+  <div class="compass">
+    <div class="compass-window"><div id="compass-strip" class="compass-strip"></div></div>
+    <div id="heading-readout" class="heading-readout">270</div>
+    <div class="compass-title">HDG</div>
+  </div>
+
+  <div class="tape tape-speed">
+    <div class="tape-title">KTS</div>
+    <div class="tape-window"><div id="speed-strip" class="tape-strip"></div></div>
+    <div id="speed-readout" class="tape-readout">062</div>
+  </div>
+
+  <div class="tape tape-alt">
+    <div class="tape-title">FT</div>
+    <div class="tape-window"><div id="alt-strip" class="tape-strip"></div></div>
+    <div id="alt-readout" class="tape-readout">0420</div>
+  </div>
+
+  <div id="attitude" class="attitude">
+    <div id="attitude-ball" class="attitude-ball">
+      <div class="attitude-sky"></div>
+      <div class="attitude-ground"></div>
+      <div id="attitude-ladder" class="attitude-ladder"></div>
+    </div>
+    <div class="attitude-mask"></div>
+    <div class="attitude-wings"><span></span><i></i><span></span></div>
+    <div class="attitude-label">ATT</div>
+  </div>
+
+  <div id="reticle" class="reticle"><div class="reticle-ring"></div><span></span></div>
+  <div id="toast" class="toast"></div>
+
+  <div class="lower-bar">
+    <div class="gauge">
+      <div class="gauge-label">THROTTLE <b id="throttle-value">72%</b></div>
+      <div class="bar"><i id="throttle-bar"></i></div>
+    </div>
+    <div class="gauge">
+      <div class="gauge-label">FUEL <b id="fuel-value">100%</b></div>
+      <div class="bar"><i id="fuel-bar"></i></div>
+    </div>
+    <div class="gauge">
+      <div class="gauge-label">HULL <b id="hull-value">100%</b></div>
+      <div class="bar"><i id="hull-bar"></i></div>
+    </div>
+    <div class="vsi">
+      <div class="gauge-label">V/S</div>
+      <div id="vsi-value">+0200</div>
+    </div>
+  </div>
+
+  <div class="keys">W/S pitch &nbsp; A/D bank &nbsp; Q/E rudder &nbsp; Shift/Ctrl throttle &nbsp; C view &nbsp; Space drop</div>
+</div>
+
+<div id="cockpit" class="cockpit hidden">
+  <div class="canopy-top"></div>
+  <div class="strut strut-left"></div>
+  <div class="strut strut-right"></div>
+  <div class="panel">
+    <div class="panel-screw s1"></div><div class="panel-screw s2"></div>
+    <div class="panel-screw s3"></div><div class="panel-screw s4"></div>
+    <div class="dial dial-attitude">
+      <div class="dial-face">
+        <div id="cockpit-horizon" class="cockpit-horizon"><i></i></div>
+        <div class="horizon-fixed"></div>
+      </div>
+      <div class="dial-caption">ATTITUDE</div>
+    </div>
+    <div class="dial dial-speed">
+      <div class="dial-face">
+        <div class="tick-ring"></div>
+        <div id="needle-speed" class="needle"></div>
+        <div class="dial-center"></div>
+        <div class="dial-number n1">40</div><div class="dial-number n2">80</div>
+      </div>
+      <div class="dial-caption">AIRSPEED</div>
+    </div>
+    <div class="dial dial-alt">
+      <div class="dial-face">
+        <div class="tick-ring"></div>
+        <div id="needle-alt" class="needle"></div>
+        <div class="dial-center"></div>
+        <div class="dial-number n1">0</div><div class="dial-number n2">2K</div>
+      </div>
+      <div class="dial-caption">ALTITUDE</div>
+    </div>
+    <div class="dial dial-heading">
+      <div class="dial-face">
+        <div class="heading-card" id="heading-card">270</div>
+        <div class="heading-mark"></div>
+      </div>
+      <div class="dial-caption">COMPASS</div>
+    </div>
+    <div class="switchbank">
+      <div class="switch-label">BEACON</div>
+      <div id="beacon-lamp" class="lamp on"></div>
+      <div class="switch-label">GEAR</div>
+      <div id="gear-lamp" class="lamp on"></div>
+      <div class="switch-label">FUEL</div>
+      <div id="fuel-lamp" class="lamp on"></div>
+    </div>
+  </div>
+</div>
+
+<div id="start" class="overlay">
+  <div class="title-block">
+    <div class="eyebrow">LANTERN ISLES / DAWN PATROL</div>
+    <h1>TIDEWING</h1>
+    <div class="subtitle">Beacon Patrol</div>
+    <p class="intro">A bush plane, five amber gates and three strips of runway between the tide and the hills. Fly the circuit, mind the fuel, and put the wheels down straight.</p>
+  </div>
+  <div class="missions">
+    <button class="mission-button" data-mission="0"><span>01</span><b>Beacon circuit</b><small>Thread five gates, then land</small></button>
+    <button class="mission-button" data-mission="1"><span>02</span><b>Supply drop</b><small>Reach the zone, release, land</small></button>
+    <button class="mission-button" data-mission="2"><span>03</span><b>Cliff rescue</b><small>Low pass by the lighthouse, then land</small></button>
+  </div>
+  <div class="control-note">Click a sortie. W/S pitch, A/D bank, Q/E rudder, Shift/Ctrl throttle, C switches the view, Space drops the crate. Mouse steers when you move it.</div>
+</div>
+
+<div id="end" class="overlay hidden">
+  <div class="title-block">
+    <div id="end-eyebrow" class="eyebrow">SORTIE COMPLETE</div>
+    <h1 id="end-title">LANDED</h1>
+    <div id="end-detail" class="subtitle"></div>
+    <button id="again" class="again-button">Fly again</button>
+  </div>
+</div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
